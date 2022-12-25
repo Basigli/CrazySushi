@@ -1,0 +1,45 @@
+
+.Inserisci button {
+    background-color: var(--text-font);
+    color: black;
+    border-radius: 25px;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 18px;
+    font-family:Arial, Helvetica, sans-serif;
+}
+.Inserisci button:hover {
+    background-color: var(--selections-2);
+    box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
+}
+.Inserisci button:active {
+    font-size: 17px;
+}
+
+
+
+:root {
+    --background: #24293e;
+    /*--selections: #8ebbff;*/
+    --selections: #ad6364;
+    --selections-1: #ad6364;
+    --selections-2: #c98181;
+    --selections-3: #da9f9e;
+    --selections-4: #e1bebd;
+    --text-font:  #e3e3e4;
+  }
+
+
+.TextContainer {
+    background-color: var(--text-font);
+    color: var(--background);
+    border-radius: 20px;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    text-transform: uppercase;
+    display: inline-block;
+    font-size: 18px;
+}
