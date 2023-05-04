@@ -1,0 +1,60 @@
+/* List */
+ul {
+    padding: 0;
+    max-width: 500px;
+    max-height: 510px;
+    overflow-y: scroll;
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+
+ul::-webkit-scrollbar {
+    display: none;
+}
+
+  
+  /* List element */
+  li {
+    
+    display: flex;
+    align-items: center;
+    padding: 5px 0;
+    box-sizing: border-box;
+  }
+  
+  
+  /* Element counter */
+  li::before {
+    /*content: counters(index, ".", decimal-leading-zero);*/
+    content: attr(ind);
+    font-size: 1.5rem;
+    text-align: right;
+    font-weight: bold;
+    min-width: 50px;
+    padding-right: 12px;
+    font-variant-numeric: tabular-nums;
+    align-self: flex-start;
+    background-image: linear-gradient(to bottom, aquamarine, orangered);
+    /*background-image: linear-gradient(to bottom, #ad6364, #e3e3e4);*/
+    background-attachment: fixed;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  
+  
+  /* Element separation */
+  li + li {
+    border-top: 1px solid rgba(255,255,255,0.2);
+  }
+  
+  /*
+  @use postcss-preset-env {
+    stage: 0;
+    autoprefixer: {
+      grid: true;
+    }
+    browsers: last 2 versions
+  }
+  */
+  

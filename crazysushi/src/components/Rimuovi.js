@@ -5,17 +5,43 @@ import { Link, useSearchParams } from 'react-router-dom';
 const Rimuovi = () => {
     const [idPiatto, setIdPiatto] = useState('');
     const [qta, setQta] = useState('1');
-    const [encryptedUid, setEncryptedUid] = useState();
-    const [idOrdine, setIdOrdine] = useState();
-    const [searchParams, setSearchParams] = useSearchParams();
+    const [encryptedUid, setEncryptedUid] = useState(window.localStorage.getItem('encryptedUid'));
+    const [idOrdine, setIdOrdine] = useState(window.localStorage.getItem('idOrdine'));
 
-    const [params, setParams] = useState();
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log('richiesta rimozione piatti');
-        const request = {idPiatto, qta, encryptedUid, idOrdine}
-        console.log(request);
+
+            
+        let formData = {
+            idPiatto: idPiatto,
+            qta: qta,
+            encryptedUid: encryptedUid,
+            idOrdine: idOrdine
+        }
+        console.log(JSON.stringify(formData)); 
+
+
+        fetch("http://192.168.1.243:3001/remove", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            console.log(data);
+           
+            console.log(data.message)
+
+            if(document.getElementsByClassName("fade-out")) {
+                document.getElementsByClassName("fade-out").innerHTML = '<p> <div class="fade-out"></div></p>';
+            }
+
+          })
+          .catch((error) => console.error(error));
+                
         setIdPiatto('');
         setQta('1');
     }
@@ -23,38 +49,30 @@ const Rimuovi = () => {
     // codice eseguito una volta renderizzato il componente
     // viene eseguito una sola volta 
     useEffect(() => {
-        // richiedo al server la lista di piatti presenti nell'ordine in json 
-        var list = '<datalist id="piatti_list">';
-        for (var i = 1; i <= 10; i++) {
-            list += '<option value="'+ i + '"></option>';
-        }
-        list += '</datalist>';
-        
-        // renderizzo la lista dei possibili piatti
-        if(document.getElementById("list")) {
-            document.getElementById("list").innerHTML = list;
-        }
 
+        let formData = {user: encryptedUid, orderId: idOrdine};
 
-         // estraggo i parametri dall'url
-         var encryptedUidVar = encodeURIComponent(searchParams.get('uid'));
-         var idOrdineVar = searchParams.get('idOrdine');
- 
-         
-         // controllo dei parametri 
-         setEncryptedUid(encryptedUidVar);
-         setIdOrdine(idOrdineVar);
-         //...
-         // codifico i parametri nell'url 
-        
-         console.log(encryptedUidVar, idOrdineVar);
-         setParams('?uid=' + encryptedUidVar + '&idOrdine=' + idOrdineVar);
- 
-         console.log('location: inserisci, params: ' + params);
- 
-        
+        fetch("http://192.168.1.243:3001/get-meals", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        })
+        .then((response) => response.json())
+        .then((data) => {
+            console.log(data);
+            console.log(data.message);
+            let menu = data.message;
+            var list = '<datalist id="piatti_list">';
+            menu.forEach((n, i) => {  list += '<option value="'+ n + '"></option>';});
+            list += '</datalist>';
+            if(document.getElementById("list")) {
+                document.getElementById("list").innerHTML = list;
+            }
+        })
+        .catch((error) => console.error(error));        
     }, []);
-    // setParams('?uid=' + encryptedUid + '&idOrdine=' + idOrdine);
 
     //---------------------------------------------------------------------
     
@@ -72,7 +90,9 @@ const Rimuovi = () => {
                 <button>Rimuovi</button>
                 <div id="list"></div>
             </form>
-            <p><Link to={"/" + params}><button>&larr;</button></Link></p>
+            <p><Link to="/"><button>&larr;</button></Link></p>
+            <div className="fade-out"></div>
+
         </div>
         );
 

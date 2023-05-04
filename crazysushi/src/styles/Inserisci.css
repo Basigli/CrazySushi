@@ -43,3 +43,18 @@
     display: inline-block;
     font-size: 18px;
 }
+
+
+.fade-out  {
+	animation: fadeOut 4s;
+	opacity: 0;
+}
+
+@keyframes fadeOut {
+  from {
+  	opacity: 1;
+  }
+  to {
+ 	opacity: 0;
+  }
+}

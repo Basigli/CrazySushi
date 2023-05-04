@@ -4,10 +4,8 @@ import { Link, useLocation, useSearchParams, redirect } from 'react-router-dom';
 import CryptoJS from 'crypto-js';
 const Home = () => {
     
-    const [searchParams, setSearchParams] = useSearchParams();
     const location = useLocation();
-    const [params, setParams] = useState();
-    
+     
     
     
     
@@ -15,7 +13,7 @@ const Home = () => {
     // codice eseguito una volta renderizzato il componente
     // viene eseguito una sola volta 
     useEffect(() => {
-        var encryptedUid = searchParams.get('uid');
+        var encryptedUid = window.localStorage.getItem('encryptedUid');
    
         var uid = ''; 
         //console.log('user criptato: ' + encryptedUid);
@@ -29,13 +27,9 @@ const Home = () => {
             redirect('./user');
         }
 
-        var idOrdine = searchParams.get('idOrdine');
+        var idOrdine = window.localStorage.getItem('idOrdine');
        // console.log('id ordine: ' + idOrdine);
         document.getElementById('_idTavolo').innerHTML = '<h3> Tavolo: ' + idOrdine + '</h3>';
-
-
-        //codifico i parametri nell'url  e controllo che siano giusti
-        setParams('?uid=' + encryptedUid + '&idOrdine=' + idOrdine);
 
 
     }, []);
@@ -50,10 +44,10 @@ const Home = () => {
             <h1>CrazySushi</h1>
             <div id="_user"></div>
             <div id="_idTavolo"></div>
-            <Link to={"./inserisci" + params}><button>&#x1F35C; Aggiungi piatti &nbsp;&nbsp;&nbsp;</button></Link><br/>
-            <Link to={"./rimuovi" + params}><button>&#x274C; Rimuovi piatti &nbsp;&nbsp;&nbsp;&nbsp;</button></Link><br/>
-            <Link to={"./visualizza" + params}><button>&#x1F5D2; Visualizza ordine</button></Link><br/>
-            <Link to={"./cancella" + params}><button>&#128686; Cancella tavolo&nbsp;</button></Link>
+            <Link to="./inserisci"><button>&#x1F35C; Aggiungi piatti &nbsp;&nbsp;&nbsp;</button></Link><br/>
+            <Link to="./rimuovi"><button>&#x274C; Rimuovi piatti &nbsp;&nbsp;&nbsp;&nbsp;</button></Link><br/>
+            <Link to="./visualizza"><button>&#x1F5D2; Visualizza ordine</button></Link><br/>
+            <Link to="./cancella"><button>&#128686; Cancella tavolo&nbsp;</button></Link>
         </div>
     );
 }

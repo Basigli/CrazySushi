@@ -9,6 +9,7 @@ import User from './components/User.js';
 
 import './styles/App.css';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import UniscitiTavolo from './components/UniscitiTavolo.js';
 
 class App extends React.Component {
   
@@ -22,6 +23,7 @@ class App extends React.Component {
               <Route exact path="/user" element={<User/>} />
               <Route exact path="/login" element={<Login/>} />
               <Route exact path="/" element={<Home/>} />
+              <Route exact path="/unisciti" element={<UniscitiTavolo/>} />
               <Route exact path="/inserisci" element={<Inserisci/>} />
               <Route exact path="/rimuovi" element={<Rimuovi/>} />
               <Route exact path="/visualizza" element={<Visualizza/>} />

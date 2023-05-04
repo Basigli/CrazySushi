@@ -3,7 +3,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 const Cancella = () => {
-    //variabili da inserire 
+    //variabili da inserire
     return(
         <div className="Cancella">
             <h1>Cancella tavolo</h1>
