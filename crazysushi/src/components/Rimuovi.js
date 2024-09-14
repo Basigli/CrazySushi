@@ -22,7 +22,7 @@ const Rimuovi = () => {
         console.log(JSON.stringify(formData)); 
 
 
-        fetch("http://192.168.1.243:3001/remove", {
+        fetch("http://192.168.1.22:3001/remove", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -52,7 +52,7 @@ const Rimuovi = () => {
 
         let formData = {user: encryptedUid, orderId: idOrdine};
 
-        fetch("http://192.168.1.243:3001/get-meals", {
+        fetch("http://192.168.1.237:3001/get-meals", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

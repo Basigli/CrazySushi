@@ -34,7 +34,7 @@ ul::-webkit-scrollbar {
     padding-right: 12px;
     font-variant-numeric: tabular-nums;
     align-self: flex-start;
-    background-image: linear-gradient(to bottom, aquamarine, orangered);
+    background-image: linear-gradient(to bottom, rgb(95, 255, 202), rgb(136, 138, 255));
     /*background-image: linear-gradient(to bottom, #ad6364, #e3e3e4);*/
     background-attachment: fixed;
     -webkit-background-clip: text;

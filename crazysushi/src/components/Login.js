@@ -20,7 +20,7 @@ const Login = () => {
         let formData = {user: window.localStorage.getItem('encryptedUid')}
       
 
-        fetch("http://192.168.1.243:3001/create", {
+        fetch("http://192.168.1.22:3001/create", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

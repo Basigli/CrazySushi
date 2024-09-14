@@ -11,7 +11,7 @@ const Visualizza = () => {
 
         let formData = {user: encryptedUid, orderId: idOrdine};
 
-        fetch("http://192.168.1.243:3001/visualize", {
+        fetch("http://192.168.1.22:3001/visualize", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

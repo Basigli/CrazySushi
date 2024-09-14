@@ -15,7 +15,7 @@ const UniscitiTavolo = () => {
         };
       
 
-        fetch("http://192.168.1.243:3001/join", {
+        fetch("http://192.168.1.22:3001/join", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

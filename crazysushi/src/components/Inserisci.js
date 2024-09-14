@@ -24,7 +24,7 @@ const Inserisci = () => {
         console.log(JSON.stringify(formData)); 
 
 
-        fetch("http://192.168.1.243:3001/add", {
+        fetch("http://192.168.1.22:3001/add", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -58,7 +58,7 @@ const Inserisci = () => {
         let formData = {user: encryptedUid}
       
 
-        fetch("http://192.168.1.243:3001/get-menu", {
+        fetch("http://192.168.1.22:3001/get-menu", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
