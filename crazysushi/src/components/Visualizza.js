@@ -1,6 +1,8 @@
 import '../styles/Visualizza.css';
 import React, { useState, useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
+import API_URL from '../config';
+
 
 const Visualizza = () => {
 
@@ -9,55 +11,55 @@ const Visualizza = () => {
 
     useEffect(() => {
 
-        let formData = {user: encryptedUid, orderId: idOrdine};
+        let formData = { user: encryptedUid, orderId: idOrdine };
 
-        fetch("http://192.168.1.22:3001/visualize", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formData),
+        fetch(`${API_URL}/visualize`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(formData),
         })
-        .then((response) => response.json())
-        .then((data) => {
-            console.log(data);
-            console.log(data.message);
-            let menu = data.message;
-            var list = '<ul>';
-            menu.forEach((n, i) => {  
-                let splittedString = n.split(' ');
-                list += '<li ind="';
-                list += splittedString[0] + '">';
-                splittedString = splittedString.slice(1);
-                list += splittedString.join(' ');
-                list += '</li>';
+            .then((response) => response.json())
+            .then((data) => {
+                console.log(data);
+                console.log(data.message);
+                let menu = data.message;
+                var list = '<ul>';
+                menu.forEach((n, i) => {
+                    let splittedString = n.split(' ');
+                    list += '<li ind="';
+                    list += splittedString[0] + '">';
+                    splittedString = splittedString.slice(1);
+                    list += splittedString.join(' ');
+                    list += '</li>';
 
-            });
-            list += '</ul>';
-            
-            
-            
+                });
+                list += '</ul>';
 
-            if(document.getElementById("list")) {
-                document.getElementById("list").innerHTML = list;
-            }
-        })
-        .catch((error) => console.error(error));    
+
+
+
+                if (document.getElementById("list")) {
+                    document.getElementById("list").innerHTML = list;
+                }
+            })
+            .catch((error) => console.error(error));
     }, []);
 
-    
-        //variabili da inserire 
-    return(
+
+    //variabili da inserire 
+    return (
         <div className="Visualizza">
             <h1>Ordine {idOrdine} </h1>
 
-                Numero    &rarr;     Qta.
-                <div id="list"></div>
+            Numero    &rarr;     Qta.
+            <div id="list"></div>
 
             <p><Link to="/"><button>&larr;</button></Link></p>
         </div>
     );
-    
+
 }
 
 export default Visualizza;
