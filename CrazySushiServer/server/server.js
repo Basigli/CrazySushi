@@ -251,36 +251,33 @@ app.post("/visualize", (req, res) => {
   // uid = CryptoJS.AES.decrypt(encryptedUid, 'rTCIWU3RYT23r8gcr3rU32TYRVdshfkjfhs32w4Y3').toString(CryptoJS.enc.Utf8);
   
   let orderId = req.body.orderId;
-  let userId = req.body.user;
-
   let result = [];
 
   let currentOrder = ordersDict.get(orderId);
   
   if (!currentOrder) {
     console.log("ordine non esistente");
-    result.push("-1");
+    result.push({ error: "-1" });
   } else {
     let currentMenu = currentOrder.menu;
     currentMenu.forEach((value, key) => {     // "2" => {"user1" => 2, "user2 => 3"}
       let total = 0;
-      let rowDetail = '';
-      let row = key;
-      row += ' &rarr; ';
-      rowDetail += ' (';
+      let breakdown = [];
       value.forEach((value, key) => {
         if (value > 0) {
-          rowDetail += ' ';
-          rowDetail += CryptoJS.AES.decrypt(key, 'rTCIWU3RYT23r8gcr3rU32TYRVdshfkjfhs32w4Y3').toString(CryptoJS.enc.Utf8);
-          rowDetail += ':';
-          rowDetail += value;
+          breakdown.push({
+            user: CryptoJS.AES.decrypt(key, 'rTCIWU3RYT23r8gcr3rU32TYRVdshfkjfhs32w4Y3').toString(CryptoJS.enc.Utf8),
+            quantity: value,
+          });
           total += value;
         }
       });
-      row += total + rowDetail;
-      row += ' )';
       if (total > 0) {
-        result.push(row);
+        result.push({
+          dishCode: key,
+          total: total,
+          breakdown: breakdown,
+        });
       }
     });
     
