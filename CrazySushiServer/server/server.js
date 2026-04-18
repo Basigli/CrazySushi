@@ -206,6 +206,38 @@ app.post("/remove", (req, res) => {
 });
 // ----------------------------------------------------------------------------------------------------------------------
 
+app.post("/toggle-arrived", (req, res) => {
+  console.log("arrivata richiesta toggle arrived da:" + req.body.user);
+
+  let orderId = req.body.orderId;
+  let mealNumber = req.body.idPiatto;
+  let signed = Boolean(req.body.signed);
+
+  let currentOrder = ordersDict.get(orderId);
+
+  if (!currentOrder) {
+    console.log("ordine non esistente");
+    orderId = "-1";
+  } else {
+    const currentMeal = currentOrder.menu.get(mealNumber);
+
+    if (!currentMeal) {
+      console.log("piatto non esistente");
+      orderId = "-1";
+    } else {
+      currentMeal.signed = signed;
+      currentOrder.menu.set(mealNumber, currentMeal);
+      ordersDict.set(orderId, currentOrder);
+      console.log("stato consegna aggiornato");
+      broadcastOrderUpdate(orderId);
+    }
+  }
+
+  res.json({ message: orderId });
+  console.log(ordersDict);
+});
+// ----------------------------------------------------------------------------------------------------------------------
+
 
 
 
@@ -276,6 +308,7 @@ app.post("/visualize", (req, res) => {
         result.push({
           dishCode: key,
           total: total,
+          signed: Boolean(value.signed),
           breakdown: breakdown,
         });
       }
