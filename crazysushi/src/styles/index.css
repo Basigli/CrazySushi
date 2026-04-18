@@ -35,3 +35,12 @@
     @apply w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-3 text-sm text-slate-100 outline-none transition-colors placeholder:text-slate-500 focus:border-brand-500;
   }
 }
+
+/* iOS Safari auto-zooms focused fields if computed font size is below 16px. */
+@media (hover: none) and (pointer: coarse) {
+  input,
+  textarea,
+  select {
+    font-size: 16px;
+  }
+}
