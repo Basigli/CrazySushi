@@ -9,6 +9,13 @@ const Visualizza = () => {
     const [expandedRows, setExpandedRows] = useState({});
     const wsUrl = API_URL.replace('http://', 'ws://').replace('https://', 'wss://');
 
+    const truncateDishName = (name) => {
+        if (!name) {
+            return '';
+        }
+        return name.length > 52 ? `${name.slice(0, 52)}...` : name;
+    };
+
     const toggleRow = (dishCode) => {
         setExpandedRows((currentExpandedRows) => ({
             ...currentExpandedRows,
@@ -35,6 +42,7 @@ const Visualizza = () => {
                         const parts = item.split(' ');
                         return {
                             dishCode: parts[0],
+                            dishName: '',
                             total: parts[1] || '0',
                             signed: false,
                             breakdown: [],
@@ -131,7 +139,10 @@ const Visualizza = () => {
                         >
                             <div className="flex items-start justify-between gap-3">
                                 <div>
-                                    <p className="text-sm font-semibold text-white">Dish {meal.dishCode}</p>
+                                    <p className="text-sm font-semibold text-white">
+                                        Dish {meal.dishCode}
+                                        {meal.dishName ? ` - ${truncateDishName(meal.dishName)}` : ''}
+                                    </p>
                                     <p className="mt-1 text-xs text-slate-400">Shared by the table</p>
                                 </div>
                                 <div className="flex items-center gap-2">

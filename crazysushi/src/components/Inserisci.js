@@ -12,9 +12,43 @@ const Inserisci = () => {
   const [encryptedUid] = useState(window.localStorage.getItem('encryptedUid'));
   const [idOrdine] = useState(window.localStorage.getItem('idOrdine'));
   const [menu, setMenu] = useState([]);
+  const [menuLookup, setMenuLookup] = useState({});
   const [confirmationMessage, setConfirmationMessage] = useState('');
 
   const isAddMode = mode === 'add';
+
+  const toLabel = (code) => {
+    const rawName = menuLookup[code] || '';
+    if (!rawName) {
+      return `Dish ${code}`;
+    }
+    const shortName = rawName.length > 44 ? `${rawName.slice(0, 44)}...` : rawName;
+    return `${code} - ${shortName}`;
+  };
+
+  const loadMenuLookup = useCallback(() => {
+    fetch(`${API_URL}/get-menu`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ user: encryptedUid }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        const payload = data.message || [];
+        const nextLookup = {};
+        payload.forEach((item) => {
+          if (item && typeof item === 'object' && item.code) {
+            nextLookup[item.code] = item.name || '';
+          } else if (typeof item === 'string') {
+            nextLookup[item] = '';
+          }
+        });
+        setMenuLookup(nextLookup);
+      })
+      .catch((error) => console.error(error));
+  }, [encryptedUid]);
 
   const loadDishes = useCallback(() => {
     const endpoint = isAddMode ? 'get-menu' : 'get-meals';
@@ -30,7 +64,17 @@ const Inserisci = () => {
       body: JSON.stringify(formData),
     })
       .then((response) => response.json())
-      .then((data) => setMenu(data.message || []))
+      .then((data) => {
+        const payload = data.message || [];
+        if (isAddMode) {
+          const dishCodes = payload
+            .map((item) => (item && typeof item === 'object' && item.code ? item.code : item))
+            .filter(Boolean);
+          setMenu(dishCodes);
+          return;
+        }
+        setMenu(payload);
+      })
       .catch((error) => console.error(error));
   }, [isAddMode, encryptedUid, idOrdine]);
 
@@ -66,6 +110,10 @@ const Inserisci = () => {
     loadDishes();
     setConfirmationMessage('');
   }, [loadDishes]);
+
+  useEffect(() => {
+    loadMenuLookup();
+  }, [loadMenuLookup]);
 
   const handleModeChange = (nextMode) => {
     setMode(nextMode);
@@ -116,7 +164,7 @@ const Inserisci = () => {
                     className="rounded-md border border-red-300/35 px-2 py-1 text-xs text-red-100 hover:bg-red-500/20"
                     onClick={() => setIdPiatto(dish)}
                   >
-                    {dish}
+                    {toLabel(dish)}
                   </button>
                 ))}
               </div>
@@ -155,9 +203,13 @@ const Inserisci = () => {
 
         <datalist id="piatti_list">
           {menu.map((dish) => (
-            <option key={dish} value={dish} />
+            <option key={dish} value={dish} label={toLabel(dish)} />
           ))}
         </datalist>
+
+        {idPiatto && (
+          <p className="text-xs text-slate-400">Selected: {toLabel(idPiatto)}</p>
+        )}
 
         <div className="flex items-center gap-3">
           <button

@@ -284,6 +284,7 @@ app.post("/visualize", (req, res) => {
   
   let orderId = req.body.orderId;
   let result = [];
+  const menuNameMap = utils.getMenuNameMap();
 
   let currentOrder = ordersDict.get(orderId);
   
@@ -307,6 +308,7 @@ app.post("/visualize", (req, res) => {
       if (total > 0) {
         result.push({
           dishCode: key,
+          dishName: menuNameMap.get(key) || '',
           total: total,
           signed: Boolean(value.signed),
           breakdown: breakdown,

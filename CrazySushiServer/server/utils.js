@@ -1,4 +1,7 @@
-fs = require('fs');
+const fs = require('fs');
+const path = require('path');
+
+const MENU_FILE_PATH = path.resolve(__dirname, '../../menu');
 
 
 function generateId() {
@@ -14,71 +17,82 @@ function generateId() {
 }
 
 
-function generateMenu() {
-    const NUM_PIATTI = 155;
-    let piatti = new Map();
-    
-    for (let i = 1; i <= NUM_PIATTI; i++) {
-      piatti.set(i.toString(), new Map());
+function parseMenuLine(line) {
+    const trimmed = line.trim();
+    if (!trimmed) {
+        return null;
     }
-    piatti.set("2A", new Map());
-    piatti.set("12A", new Map());
-    piatti.set("20A", new Map());
-    piatti.set("48A", new Map());
-    piatti.set("60A", new Map());
-    piatti.set("61A", new Map());
-    piatti.set("70A", new Map());
-    piatti.set("89A", new Map());
-    piatti.set("107A", new Map());
-    piatti.set("107B", new Map());
-    piatti.set("116A", new Map());
-    piatti.set("125A", new Map());
-    piatti.set("134A", new Map());
-    piatti.set("134B", new Map());
-    piatti.set("143A", new Map());
-    piatti.set("149A", new Map());
 
-    /*
-    let piattiObj = {};
-    for (let [key, value] of piatti) {
-        piattiObj[key] = value;
-      }
-    let jsonString = JSON.stringify(piattiObj);
-    // Scrivi la stringa JSON in un file
-    
-    fs.writeFile('./menu.json', jsonString, function (err) {
-        if (err) {
-            console.error(err);
-        } else {
-            console.log('File salvato correttamente');
+    const codeMatch = trimmed.match(/^([0-9]+[A-Z]?)\.\s*(.+)$/);
+    if (!codeMatch) {
+        return null;
+    }
+
+    const code = codeMatch[1];
+    const rawNameAndPrice = codeMatch[2];
+    const name = rawNameAndPrice.split('€')[0].trim();
+
+    if (!name) {
+        return null;
+    }
+
+    return { code: code, name: name };
+}
+
+
+function getMenuEntries() {
+    let content = '';
+
+    try {
+        content = fs.readFileSync(MENU_FILE_PATH, 'utf8');
+    } catch (err) {
+        console.error('Could not read menu file:', err);
+        return [];
+    }
+
+    const result = [];
+    const lines = content.split(/\r?\n/);
+
+    lines.forEach((line) => {
+        const parsed = parseMenuLine(line);
+        if (parsed) {
+            result.push(parsed);
         }
     });
 
-    */
-   /*
-    try {
-        const data = fs.readFileSync('./menu.json', 'utf8');
-        piatti = JSON.parse(data);
-        console.log(piatti);
-    } catch (err) {
-        console.error(err);
-    }
-    */
+    return result;
+}
+
+
+function getMenuNameMap() {
+    const map = new Map();
+    const entries = getMenuEntries();
+
+    entries.forEach((entry) => {
+        map.set(entry.code, entry.name);
+    });
+
+    return map;
+}
+
+
+function generateMenu() {
+    let piatti = new Map();
+    const entries = getMenuEntries();
+
+    entries.forEach((entry) => {
+        piatti.set(entry.code, new Map());
+    });
+
     return piatti;
 }
 
 
 function getMenu() {
-    // return generateMenu().keys();
-    let result = []
-    for (let key of generateMenu().keys()) {
-        result.push(key);
-    }
-    return result;
+    return getMenuEntries();
 }
   
 
-
-module.exports = {generateId, generateMenu, getMenu}
+module.exports = {generateId, generateMenu, getMenu, getMenuNameMap}
 
 

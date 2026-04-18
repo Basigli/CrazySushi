@@ -51,7 +51,18 @@ def fetch_menu(base_url: str, timeout: float) -> List[str]:
     menu = data.get("message", [])
     if not isinstance(menu, list) or not menu:
         raise RuntimeError("Backend returned an empty menu")
-    return [str(item) for item in menu]
+
+    dish_codes = []
+    for item in menu:
+        if isinstance(item, dict) and item.get("code"):
+            dish_codes.append(str(item["code"]))
+        elif isinstance(item, str):
+            dish_codes.append(item)
+
+    if not dish_codes:
+        raise RuntimeError("Backend menu payload does not include dish codes")
+
+    return dish_codes
 
 
 def create_order(base_url: str, timeout: float, creator: str) -> str:
