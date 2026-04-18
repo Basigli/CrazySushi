@@ -2,6 +2,8 @@
 // import * as utils from "./utils.js";
 const utils = require("./utils");
 const express = require("express");
+const http = require("http");
+const { WebSocketServer } = require("ws");
 const cors = require('cors');
 const bodyParser = require('body-parser');
 // import CryptoJS from 'crypto-js';
@@ -13,8 +15,78 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
+const server = http.createServer(app);
+const wss = new WebSocketServer({ server });
+
 
 var ordersDict = new Map();
+const orderSubscribers = new Map();
+
+const addSubscriber = (orderId, ws) => {
+  if (!orderSubscribers.has(orderId)) {
+    orderSubscribers.set(orderId, new Set());
+  }
+  orderSubscribers.get(orderId).add(ws);
+};
+
+const removeSubscriber = (orderId, ws) => {
+  if (!orderId || !orderSubscribers.has(orderId)) {
+    return;
+  }
+  const subscribers = orderSubscribers.get(orderId);
+  subscribers.delete(ws);
+  if (subscribers.size === 0) {
+    orderSubscribers.delete(orderId);
+  }
+};
+
+const broadcastOrderUpdate = (orderId) => {
+  const subscribers = orderSubscribers.get(orderId);
+  if (!subscribers) {
+    return;
+  }
+
+  const payload = JSON.stringify({
+    type: 'order-updated',
+    orderId: orderId,
+    at: Date.now(),
+  });
+
+  subscribers.forEach((client) => {
+    if (client.readyState === 1) {
+      client.send(payload);
+    }
+  });
+};
+
+wss.on('connection', (ws) => {
+  ws.subscribedOrderId = null;
+
+  ws.on('message', (rawMessage) => {
+    let message;
+
+    try {
+      message = JSON.parse(rawMessage.toString());
+    } catch (err) {
+      return;
+    }
+
+    if (message.type !== 'subscribe-order' || !message.orderId) {
+      return;
+    }
+
+    if (ws.subscribedOrderId) {
+      removeSubscriber(ws.subscribedOrderId, ws);
+    }
+
+    ws.subscribedOrderId = message.orderId;
+    addSubscriber(message.orderId, ws);
+  });
+
+  ws.on('close', () => {
+    removeSubscriber(ws.subscribedOrderId, ws);
+  });
+});
 
 
 
@@ -90,6 +162,7 @@ app.post("/add", (req, res) => {
     currentOrder.menu = currentMenu;
     ordersDict.set(orderId, currentOrder);
     console.log("piatto aggiunto");
+    broadcastOrderUpdate(orderId);
   }
 
 
@@ -125,6 +198,7 @@ app.post("/remove", (req, res) => {
     currentOrder.menu = currentMenu;
     ordersDict.set(orderId, currentOrder);
     console.log("piatto rimosso");
+    broadcastOrderUpdate(orderId);
   }
 
   res.json({ message: orderId });
@@ -214,6 +288,6 @@ app.post("/visualize", (req, res) => {
   res.json({ message: result });
 });
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`Server listening on ${PORT}`);
 });

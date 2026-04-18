@@ -1,45 +1,50 @@
-import '../styles/Rimuovi.css';
-import React, { useState, useEffect } from 'react';
-import { Link, useLocation, redirect } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import CryptoJS from 'crypto-js';
-import API_URL from '../config';
-
 
 const User = () => {
-
     const [user, setUser] = useState('');
     const [registered, setRegistered] = useState(false);
-    const [link, setLink] = useState('../login');
 
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        // cifro i parametri
-        const encryptedUid = CryptoJS.AES.encrypt(user, 'rTCIWU3RYT23r8gcr3rU32TYRVdshfkjfhs32w4Y3').toString();
+        const encryptedUid = CryptoJS.AES.encrypt(
+            user,
+            'rTCIWU3RYT23r8gcr3rU32TYRVdshfkjfhs32w4Y3'
+        ).toString();
         window.localStorage.setItem('encryptedUid', encryptedUid);
         setRegistered(true);
-
-
-    }
-
+    };
 
     return (
-        <div className='User'>
-            <h1>CrazySushi</h1>
-            <h3>Come ti chiami?</h3>
-            <form onSubmit={handleSubmit}>
-                <p>
-                    <input required type="text" className="TextContainer" name="_userId" maxLength="20" size="15" value={user} onChange={(e) => setUser(e.target.value)}></input>
-                </p>
-                {!registered && <button>Registrati</button>}
+        <div className="app-card mx-auto mt-10 w-full max-w-xl">
+            <p className="text-xs uppercase tracking-[0.2em] text-brand-100/80">Welcome</p>
+            <h1 className="mt-1 text-4xl font-extrabold text-white">CrazySushi</h1>
+            <h3 className="mt-4 text-lg text-slate-200">What should we call you?</h3>
+
+            <form className="mt-4" onSubmit={handleSubmit}>
+                <input
+                    required
+                    type="text"
+                    className="input-field"
+                    name="_userId"
+                    maxLength="20"
+                    value={user}
+                    onChange={(e) => setUser(e.target.value)}
+                    placeholder="Your nickname"
+                />
+                {!registered && <button className="primary-btn mt-4">Register</button>}
             </form>
-            {registered && <Link to={link}><button>Avanti</button></Link>}
+
+            {registered && (
+                <div className="mt-6">
+                    <Link to="/login" className="primary-btn inline-block">Continue</Link>
+                </div>
+            )}
         </div>
-
     );
-
-
-}
+};
 
 
 export default User;
