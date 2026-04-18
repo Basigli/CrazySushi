@@ -1,0 +1,22 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: CrazySushiServer/Dockerfile
+    container_name: crazysushi-backend
+    ports:
+      - "3001:3001"
+
+  frontend:
+    build:
+      context: ./crazysushi
+      dockerfile: Dockerfile
+    container_name: crazysushi-frontend
+    depends_on:
+      - backend
+    environment:
+      - HOST=0.0.0.0
+      - CHOKIDAR_USEPOLLING=true
+      - WDS_SOCKET_PORT=0
+    ports:
+      - "3000:3000"
