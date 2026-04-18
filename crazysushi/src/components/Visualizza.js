@@ -137,15 +137,15 @@ const Visualizza = () => {
                             key={meal.dishCode}
                             className={meal.signed ? 'rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-4' : 'rounded-xl border border-slate-800 bg-slate-900/80 p-4'}
                         >
-                            <div className="flex items-start justify-between gap-3">
-                                <div>
-                                    <p className="text-sm font-semibold text-white">
-                                        Dish {meal.dishCode}
+                            <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                                <div className="min-w-0">
+                                    <p className="text-base font-semibold leading-tight text-white">
+                                        <span className="text-slate-300">Dish {meal.dishCode}</span>
                                         {meal.dishName ? ` - ${truncateDishName(meal.dishName)}` : ''}
                                     </p>
                                     <p className="mt-1 text-xs text-slate-400">Shared by the table</p>
                                 </div>
-                                <div className="flex items-center gap-2">
+                                <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto sm:justify-end">
                                     <label className="flex items-center gap-2 rounded-full border border-slate-700 bg-slate-950 px-3 py-2 text-xs font-semibold text-slate-200">
                                         <input
                                             type="checkbox"
@@ -158,7 +158,7 @@ const Visualizza = () => {
                                     <button
                                         type="button"
                                         onClick={() => toggleRow(meal.dishCode)}
-                                        className="rounded-full border border-blue-500/30 bg-blue-500/15 px-3 py-1 text-sm font-semibold text-blue-100 transition-colors hover:bg-blue-500/25"
+                                        className="rounded-full border border-blue-500/30 bg-blue-500/15 px-3 py-2 text-sm font-semibold text-blue-100 transition-colors hover:bg-blue-500/25"
                                     >
                                         {expandedRows[meal.dishCode] ? 'Hide details' : 'Show details'}
                                     </button>
